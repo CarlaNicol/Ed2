@@ -49,7 +49,36 @@ public class Grafo
                 i++;                    
         }
     }     
-    
+    public void mostrarCaminosRecorridoBFS( String verticeOrigen, String verticeDestino ){
+        Vertice v = buscarVertice( verticeOrigen );
+        Vertice w = buscarVertice( verticeDestino );
+        if( v == null || w == null) return;
+        
+        LinkedList<LinkedList<String>> cola = new LinkedList();
+        LinkedList<String> camino = new LinkedList();
+        
+        camino.add( verticeOrigen );
+        cola.add(camino);
+        
+        do {
+            camino = cola.pop();
+            v = buscarVertice( camino.getLast() );
+            if( v.getNombre().equals(verticeDestino )){
+                System.out.println( camino );
+            }
+            
+            for (int i = 0; i < v.LArcos.dim(); i++) {
+                Arco a = (Arco)v.LArcos.getElem(i);
+                w = buscarVertice( a.getNombreVertD() );
+                if( !camino.contains(w.getNombre())){
+                    LinkedList<String> nuevoCamino = new LinkedList( camino );
+                    nuevoCamino.add(w.getNombre());
+                    cola.add(nuevoCamino);
+                }
+            }
+            
+        } while (!cola.isEmpty());
+    }
     //METODOS DE ENSEÑANZA    Sumar peso
     public float peso()
     {
