@@ -315,7 +315,24 @@ public class ArbolM {
     
    }    
 
+    private boolean VerificarSiEsLista(Nodo pr) {
+        if (pr != null) {
+            if ( pr.CantNodoOcupado(pr)> 1) {
+                return false;
+            }   
+            for (int i = 1; i <= pr.M; i++) {
+                boolean nd = nd = VerificarSiEsLista(pr.getHijo(i));    
+                if ( !nd) {
+                    return nd;
+                } 
+            }             
+        }
+        return true;
+    }
     
+    public void VerificarEsListaEnlazada() {
+        System.out.println("" + VerificarSiEsLista(raiz));
+    }
 
    private List<Integer> mostrarNivelDerIzq(Nodo P, List<Integer> lista, int n) {
 
