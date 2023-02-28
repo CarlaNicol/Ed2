@@ -303,7 +303,102 @@ public class Grafo
            }
        }
    }
-   
+   public void MostrarCaminosCostoBajo(String x, String y, JTextArea jta) {
+        Vertice v1 = buscarVertice(x);
+        Vertice v2 = buscarVertice(y);
+        LinkedList<String> l = new LinkedList<String>();
+        LinkedList<Float> costo = new LinkedList<Float>();
+        l.add(v1.getNombre());
+        MostrarCaminosCostoBajo(v1, v2, l, jta, 0, costo);
+        l.clear();
+        float bajo = costo.getFirst();
+        for (int i = 0; i < costo.size(); i++) {
+            if (costo.get(i) < bajo) {
+                bajo = costo.get(i);
+            }
+        }
+        jta.append("El costo mas bajo es: " + bajo + "\n");
+    }
+    public boolean cantantidadCaminos(String x, String y, int cantidad) {
+        Vertice vo = buscarVertice(x);
+        Vertice vd = buscarVertice(y);
+        LinkedList<String> l = new LinkedList<String>();
+        l.add(vo.getNombre());
+        int cantCaminos = 0;
+        cantidadCaminos(vo, vd, l, cantCaminos);
+        l.clear();
+        if (cantidad == cantCaminos) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void cantidadCaminos(Vertice x, Vertice y, LinkedList<String> l, int cantCaminos) {
+        if (existeCamino(x.getNombre(), y.getNombre())) {
+            Arco a;
+            for (int i = 0; i < x.LArcos.dim(); i++) {
+                a = (Arco) x.LArcos.getElem(i);
+                if (!l.contains(a.getNombreVertD())) {
+                    l.add(a.getNombreVertD());
+                    if (l.getLast().equals(y.getNombre())) {
+                        cantCaminos++;
+                    }
+                    Vertice v = buscarVertice(a.getNombreVertD());
+                    cantidadCaminos(v, y, l, cantCaminos);
+                    l.removeLast();
+                }
+            }
+
+        }
+    }
+
+    private void MostrarCaminosCostoBajo(Vertice x, Vertice y, LinkedList<String> l, JTextArea jta, float suma, LinkedList<Float> costo) {
+        if (existeCamino(x.getNombre(), y.getNombre())) {
+            Arco a;
+            for (int i = 0; i < x.LArcos.dim(); i++) {
+                a = (Arco) x.LArcos.getElem(i);
+                if (!l.contains(a.getNombreVertD())) {
+                    suma = suma + a.getCosto();
+                    l.add(a.getNombreVertD());
+                    if (l.getLast().equals(y.getNombre())) {
+                        costo.add(suma);
+                        jta.append(l.toString() + " y su costo= " + suma + "\n");
+                    }
+                    Vertice v = buscarVertice(a.getNombreVertD());
+                    MostrarCaminosCostoBajo(v, y, l, jta, suma, costo);
+                    l.removeLast();
+                    suma = suma - a.getCosto();
+                }
+            }
+        }
+    }
+    private boolean esTernario(Vertice vo) {
+        vo.marcado = true;
+        if (vo.LArcos.dim() <= 3) {
+            boolean b = true;
+            for (int i = 0; i < vo.LArcos.dim(); i++) {
+                Arco a = (Arco) vo.LArcos.getElem(i);
+                Vertice vproximo = buscarVertice(a.getNombreVertD());
+                if (vproximo.marcado) {
+                    return false;
+                }
+                b = esTernario(vproximo);
+                if (!b) {
+                    return false;
+                }
+            }
+            return b;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean esTernario(String origen) {
+        desmarcarTodos();
+        Vertice vo = buscarVertice(origen);
+        return esTernario(vo);
+    }
    public void EliminarArco(String x, String y){
        Vertice v,v1;
        v=buscarVertice(x);
@@ -319,4 +414,29 @@ public class Grafo
                i++;
            }
        }
+       public boolean iguales(Grafo G2) {
+        if (this.LVertices.dim() != G2.LVertices.dim()) {
+            return false;
+        }
+        int i = 0;
+        int j = 0;
+        while (i < this.LVertices.dim()) {
+            Vertice v1 = (Vertice) this.LVertices.getElem(i);
+            Vertice v2 = (Vertice) G2.LVertices.getElem(i);
+            if (!v1.getNombre().equals(v2.getNombre()) || (v1.LArcos.dim() != v2.LArcos.dim())) {
+                return false;
+            } else {
+                while (j < v1.LArcos.dim()) {
+                    Arco a1 = (Arco) v1.LArcos.getElem(j);
+                    Arco a2 = (Arco) v2.LArcos.getElem(j);
+                    if (!a1.getNombreVertD().equals(a2.getNombreVertD()) || a1.getCosto() != a2.getCosto()) {
+                        return false;
+                    }
+                    j++;
+                }
+            }
+            i++;
+        }
+        return true;
+    }
    }
