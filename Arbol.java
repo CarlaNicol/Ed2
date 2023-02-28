@@ -290,5 +290,65 @@ public void mostrarabuelo(int nivel, JTextArea ta){
         Arbol s = new Arbol();
         
     }
+    private void MostrarNivel(Nodo pr, int n, int nivel, JTextArea ta) {
+        if (pr == null) {
+            return;
+        }
+        if (n == nivel) {
+            ta.append(pr.getElem() + " ");
+            return;
+        } else {
+            MostrarNivel(pr.getHI(), n, nivel + 1, ta);
+            MostrarNivel(pr.getHD(), n, nivel + 1, ta);
+            nivel = 1;
+        }
+    }
+
+    public void MostrarNivel(int nivel, JTextArea rtb) {
+        MostrarNivel(raiz, nivel, 1, rtb);
+    }
+    public boolean verifSubarbol(Arbol a2) {
+        return verifSubarbol(this.raiz, a2.raiz);
+    }
+
+    private boolean verifSubarbol(Nodo P, Nodo P2) {
+        if (P == null) {
+            return false;
+        } else {
+            if (P.getElem() == P2.getElem()) {
+                if (Iguales(P, P2)) {
+                    return true;
+                }
+            } else {
+                boolean h1 = verifSubarbol(P.getHI(), P2);
+                boolean h2 = verifSubarbol(P.getHD(), P2);
+                if (h1 || h2) {
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+    }
+
+    private boolean Iguales(Nodo P, Nodo P2) {
+        if (P == null && P2 == null) {
+            return true;
+        }
+        if (P == null || P2 == null) {
+            return false;
+        } else {
+            if (P.getElem() != P2.getElem()) {
+                return false;
+            } else {
+                boolean h1 = Iguales(P.getHI(), P2.getHI());
+                boolean h2 = Iguales(P.getHD(), P2.getHD());
+                if (!h1 || !h2) {
+                    return false;
+                }
+                return true;
+            }
+        }
+    }
 }//end class
 
